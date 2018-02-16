@@ -9,8 +9,10 @@ public class Problem1 {
     public static void main(String[] args) {
         System.out.println("Problem 1");
 
-        Path path = Paths.get("C:/Users/Howard/Source/Repos/CodeQuestMentor2018/Practice-CodeQuest2017/Problem 1", "Prob01.in.txt");
-        Charset charset = Charset.forName("ISO-8859-1");
+        Path path = Paths.get(".", "Prob01.in.txt");
+        Charset charset;
+        // charset = Charset.forName("US-ASCII");
+        charset = Charset.forName("ISO-8859-1");
 
         try {
             List<String> lines = Files.readAllLines(path, charset);

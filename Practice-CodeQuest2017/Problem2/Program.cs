@@ -7,7 +7,7 @@ namespace Problem2
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Problem 2");
             var lines = File.ReadAllLines("./Prob02.in.txt");
 
             foreach(var l in lines) {
