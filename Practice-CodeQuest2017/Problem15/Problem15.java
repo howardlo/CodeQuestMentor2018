@@ -41,6 +41,7 @@ public class Problem15 {
         char[] list = txt.toCharArray();
         for(char c: list)
         {
+            d.put( c, )
             System.out.print(c);
         }
     }
