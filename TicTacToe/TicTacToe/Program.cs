@@ -25,7 +25,7 @@ namespace TicTacToe
             // TestDiagnalWin();
 
             Board.AddRange(new CellState[9]);
-            Print(Board);
+            // Print(Board);
 
             Board[0] = CellState.O;
             Board[1] = CellState.E;
@@ -33,46 +33,150 @@ namespace TicTacToe
 
             Board[3] = CellState.X;
             Board[4] = CellState.E;
-            Board[5] = CellState.E;
+            Board[5] = CellState.X;
 
-            Board[6] = CellState.X;
+            Board[6] = CellState.E;
             Board[7] = CellState.O;
             Board[8] = CellState.O;
 
             Print(Board);
-            Console.WriteLine($"is win: {IsWin(Board, CellState.X)}\n");
-            var isWin = IsWin(Board, CellState.X);
-            if (!isWin)
-            {
-                var nextBestMove = NextBestMove(Board, CellState.X);
-            }
 
+            var newBoard = new List<CellState>(Board);
+            var bestMove = minimax(newBoard, CellState.X);
+            Console.WriteLine($"bestMove: {bestMove}");
 
             Console.ReadLine();
         }
 
 
-        public static int NextBestMove(List<CellState> board, CellState player)
+
+        // Converted javascript from freeCodeCamp
+        // https://medium.freecodecamp.org/how-to-make-your-tic-tac-toe-game-unbeatable-by-using-the-minimax-algorithm-9d690bad4b37
+        public static int minimax(List<CellState> newBoard, CellState player)
         {
-            var count = 0;
-            foreach( var c in board)
+            var availableCellIndices = newBoard.Select((c, i) => new { Value = c, Index = i })
+                .Where(e => e.Value == CellState.E).Select(e => e.Index);
+            availableCellIndices.ToList().ForEach(e => { Console.WriteLine(e); });
+
+            if (IsWin(newBoard, CellState.O))
             {
-                Console.WriteLine($"{count} | {c}");
-                if( c == CellState.E)
-                {
-                    var copy = new List<CellState>(board)
-                    {
-                        [count] = player
-                    };
-                    Print(copy);
-                    var isWin = IsWin(copy, CellState.X);
-                    Console.WriteLine($"{count} | is win: {isWin}\n");
-                    if (isWin) return count;
-                }
-                count++;
+                return -10;
             }
-            return -1;
+            else if (IsWin(newBoard, CellState.X))
+            {
+                return 10;
+            }
+            else if (availableCellIndices.Count() == 0)
+            {
+                return 0;
+            }
+
+            var moves = new List<Move>();
+
+            availableCellIndices.ToList().ForEach(e =>
+            {
+                // Console.WriteLine(e);
+                var move = new Move { Index = e };
+                newBoard[e] = player;
+
+
+                if (player == CellState.X)
+                {
+                    var result = minimax(newBoard, CellState.O);
+                    move.Score = result;
+                }
+                else
+                {
+                    var result = minimax(newBoard, CellState.X);
+                    move.Score = result;
+                }
+
+                newBoard[e] = CellState.E;
+                moves.Add(move);
+            });
+
+
+
+            Move bestMove = null;
+            if( player == CellState.X)
+            {
+                var bestScore = -10;
+                foreach(var m in moves)
+                {
+                    if( m.Score > bestScore)
+                    {
+                        bestScore = m.Score;
+                        bestMove = m;
+                    }
+
+                }
+            }
+            else
+            {
+                var bestScore = 10;
+                foreach (var m in moves)
+                {
+                    if (m.Score < bestScore)
+                    {
+                        bestScore = m.Score;
+                        bestMove = m;
+                    }
+                }
+            }
+
+            return bestMove.Index;
         }
+
+        public class Move
+        {
+            public int Index;
+            public int Score;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -221,8 +325,8 @@ namespace TicTacToe
 
         public static bool IsWin(List<CellState> board, CellState player)
         {
-            return IsHorizontalWin(board, player) 
-                || IsVerticalWin(board, player) 
+            return IsHorizontalWin(board, player)
+                || IsVerticalWin(board, player)
                 || IsDiagonalWin(board, player);
         }
 
@@ -249,7 +353,7 @@ namespace TicTacToe
         {
             for (var i = 0; i < 3; i++)
             {
-                if (board.Skip(i).Take(9).Where((e, j) => j%3 == 0).All(e => e == player)) return true;
+                if (board.Skip(i).Take(9).Where((e, j) => j % 3 == 0).All(e => e == player)) return true;
             }
 
             return false;
